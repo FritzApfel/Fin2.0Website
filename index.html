@@ -100,13 +100,35 @@
     </div>
   </div>
 
-  <!-- Audio automatisch abspielen -->
-  <audio id="bgAudio" src="lied1.mp3" preload="auto" loop playsinline></audio>
+  <!-- Audio automatisch abspielen: lied1 einmal, dann lied2 loop -->
+  <audio id="bgAudio" preload="auto" playsinline></audio>
 
   <script>
     const audio = document.getElementById('bgAudio');
-    audio.volume = 0.9;
-    audio.play().catch(err => console.log('Autoplay blockiert:', err));
+    const lied1 = 'lied1.mp3'; // einmal abspielen
+    const lied2 = 'lied2.mp3'; // danach in Dauerschleife
+    let stage = 0; // 0 = lied1, 1 = lied2
+
+    function playNext() {
+      if(stage === 0){
+        audio.src = lied1;
+        audio.loop = false;
+        stage = 1;
+      } else {
+        audio.src = lied2;
+        audio.loop = true;
+      }
+      audio.play().catch(err => console.log('Autoplay blockiert:', err));
+    }
+
+    // Wenn ein Lied endet, nächstes abspielen
+    audio.addEventListener('ended', ()=>playNext());
+
+    // Beim Laden starten
+    window.addEventListener('load', ()=>{
+      audio.volume = 0.9;
+      playNext();
+    });
   </script>
 </body>
 </html>
